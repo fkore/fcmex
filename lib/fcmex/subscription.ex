@@ -65,6 +65,10 @@ defmodule Fcmex.Subscription do
   defp request(func) do
     retry with: exp_backoff() |> randomize |> expiry(10_000) do
       func.()
+    after
+      result -> result
+    else
+      error -> error
     end
     |> Util.parse_result()
   end
